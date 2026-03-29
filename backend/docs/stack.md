@@ -1,0 +1,3 @@
+- .NET 8 Web API
+- PostgreSQL
+- Docker for local dev
