@@ -1,0 +1,73 @@
+# Visual Studio / Rider / VS Code
+.vs/
+.vscode/
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.iml
+
+# Build outputs
+bin/
+obj/
+out/
+
+# NuGet
+*.nupkg
+.packages/
+.nuget/
+
+# ASP.NET Core / sensitive settings
+appsettings.Development.json
+secrets.json
+*.pfx
+*.pem
+
+# Uploaded or generated media/files
+Uploads/
+uploads/
+wwwroot/uploads/
+
+# Database files
+*.db
+*.db-shm
+*.db-wal
+*.sqlite
+
+# Logs and test results
+*.log
+logs/
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Runtime files
+*.pid
+*.cache
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Misc
+.env
+.vagrant/
+
+# JetBrains Rider
+.idea/
+
+# Ignore user-specific files created by Visual Studio
+*.vcxproj.user
+*.csproj.user
+
+# Ignore published output
+publish/
+
+# Docker
+docker-compose.override.yml
+
+# Optional: ignore local development files or secrets
+local.settings.json
+
+# End of file
