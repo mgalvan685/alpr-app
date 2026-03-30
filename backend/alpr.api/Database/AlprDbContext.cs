@@ -1,4 +1,5 @@
 ﻿using alpr.api.Database.Models;
+using alpr.api.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace alpr.api.Database;
@@ -25,7 +26,7 @@ public class AlprDbContext : DbContext
             entity.HasKey(v => v.Id);
             entity.Property(v => v.FileName).IsRequired();
             entity.Property(v => v.UploadTime).IsRequired();
-            entity.Property(v => v.ProcessingStatus).HasDefaultValue("Pending");
+            entity.Property(v => v.ProcessingStatus).HasDefaultValue(VideoProcessingStatus.PROCESSING);
         });
 
         // PlateSightings table
@@ -51,6 +52,7 @@ public class AlprDbContext : DbContext
             entity.ToTable("plate_summaries");
             entity.HasKey(p => p.Plate); // Plate is the primary key
 
+            entity.Property(p => p.State).IsRequired();
             entity.Property(p => p.TotalCount).IsRequired();
             entity.Property(p => p.LastSeen).IsRequired();
         });

@@ -3,7 +3,7 @@ using alpr.api.Database.Models;
 
 namespace alpr.api.Controllers;
 
-[Route("api/[controller]")]
+[Route("[controller]")]
 [ApiController]
 public class PlatesController : ControllerBase
 {

@@ -1,4 +1,5 @@
 using alpr.api.Database;
+using alpr.api.Workers;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,6 +11,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<AlprDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Register background workers
+builder.Services.AddHostedService<VideoProcessingWorker>();
 
 builder.Services.AddCors(options =>
 {
@@ -27,7 +31,7 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    //app.UseSwaggerUI();
+    app.UseSwaggerUI();
 }
 
 app.UseCors("AllowAll");
