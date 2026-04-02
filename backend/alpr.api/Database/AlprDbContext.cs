@@ -1,5 +1,4 @@
 ﻿using alpr.api.Database.Models;
-using alpr.api.Helpers;
 using Microsoft.EntityFrameworkCore;
 
 namespace alpr.api.Database;
@@ -12,6 +11,7 @@ public class AlprDbContext : DbContext
     }
 
     public DbSet<Video> Videos => Set<Video>();
+    public DbSet<VideoMetadata> VideoMetadata => Set<VideoMetadata>();
     public DbSet<PlateSighting> PlateSightings => Set<PlateSighting>();
     public DbSet<PlateSummary> PlateSummaries => Set<PlateSummary>();
 
@@ -20,14 +20,15 @@ public class AlprDbContext : DbContext
         base.OnModelCreating(modelBuilder);
 
         // Video table
-        modelBuilder.Entity<Video>(entity =>
-        {
-            entity.ToTable("videos");
-            entity.HasKey(v => v.Id);
-            entity.Property(v => v.FileName).IsRequired();
-            entity.Property(v => v.UploadTime).IsRequired();
-            entity.Property(v => v.ProcessingStatus).HasDefaultValue(VideoProcessingStatus.PROCESSING);
-        });
+        modelBuilder.Entity<Video>()
+            .ToTable("videos")
+            .HasOne(v => v.Metadata)
+            .WithOne(m => m.Video)
+            .HasForeignKey<VideoMetadata>(m => m.VideoId)
+            .OnDelete(DeleteBehavior.Cascade);
+
+        modelBuilder.Entity<VideoMetadata>()
+            .ToTable("video_metadata");
 
         // PlateSightings table
         modelBuilder.Entity<PlateSighting>(entity =>
@@ -50,7 +51,7 @@ public class AlprDbContext : DbContext
         modelBuilder.Entity<PlateSummary>(entity =>
         {
             entity.ToTable("plate_summaries");
-            entity.HasKey(p => p.Plate); // Plate is the primary key
+            entity.HasKey(p => p.Plate);
 
             entity.Property(p => p.State).IsRequired();
             entity.Property(p => p.TotalCount).IsRequired();

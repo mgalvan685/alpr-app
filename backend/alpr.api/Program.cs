@@ -1,4 +1,6 @@
 using alpr.api.Database;
+using alpr.api.Services;
+using alpr.api.Services.Interfaces;
 using alpr.api.Workers;
 using Microsoft.EntityFrameworkCore;
 
@@ -14,6 +16,10 @@ builder.Services.AddDbContext<AlprDbContext>(options =>
 
 // Register background workers
 builder.Services.AddHostedService<VideoProcessingWorker>();
+
+// Register ALPR services
+builder.Services.AddSingleton<IAlprEngine, FakeAlprEngine>(); // TODO: Replace with real implementation2
+builder.Services.AddSingleton<IVideoMetadataService, FfprobeMetadataService>();
 
 builder.Services.AddCors(options =>
 {

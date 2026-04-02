@@ -23,7 +23,6 @@
     <Folder Include="Data\" />
     <Folder Include="Infrastructure\" />
     <Folder Include="Database\Migrations\" />
-    <Folder Include="Services\" />
   </ItemGroup>
 
 </Project>

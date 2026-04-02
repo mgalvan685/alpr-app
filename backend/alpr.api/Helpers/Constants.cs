@@ -13,3 +13,14 @@ public static class VideoProcessingStatus
     public const string FAILED = "Failed";
 }
 
+public static class VideoConstants
+{
+    public static readonly string[] ALLOWED_EXTENSIONS =
+    {
+        ".mp4", ".mov", ".avi", ".mkv", ".wmv"
+    };
+
+    // 500 MB limit for uploaded videos; adjust as needed based on expected use cases and server capabilities
+    public const long MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB
+}
+

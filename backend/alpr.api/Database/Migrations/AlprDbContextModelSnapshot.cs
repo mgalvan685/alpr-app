@@ -22,6 +22,37 @@ namespace alpr.api.Database.Migrations
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
+            modelBuilder.Entity("VideoMetadata", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<double?>("DurationSeconds")
+                        .HasColumnType("double precision");
+
+                    b.Property<double?>("FrameRate")
+                        .HasColumnType("double precision");
+
+                    b.Property<int?>("Height")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("VideoId")
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("Width")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VideoId")
+                        .IsUnique();
+
+                    b.ToTable("video_metadata", (string)null);
+                });
+
             modelBuilder.Entity("alpr.api.Database.Models.PlateSighting", b =>
                 {
                     b.Property<int>("Id")
@@ -85,11 +116,13 @@ namespace alpr.api.Database.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<string>("ProcessingStatus")
                         .IsRequired()
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("text")
-                        .HasDefaultValue("Processing");
+                        .HasColumnType("text");
 
                     b.Property<DateTime>("UploadTime")
                         .HasColumnType("timestamp with time zone");
@@ -99,6 +132,17 @@ namespace alpr.api.Database.Migrations
                     b.ToTable("videos", (string)null);
                 });
 
+            modelBuilder.Entity("VideoMetadata", b =>
+                {
+                    b.HasOne("alpr.api.Database.Models.Video", "Video")
+                        .WithOne("Metadata")
+                        .HasForeignKey("VideoMetadata", "VideoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Video");
+                });
+
             modelBuilder.Entity("alpr.api.Database.Models.PlateSighting", b =>
                 {
                     b.HasOne("alpr.api.Database.Models.Video", null)
@@ -106,6 +150,11 @@ namespace alpr.api.Database.Migrations
                         .HasForeignKey("VideoId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("alpr.api.Database.Models.Video", b =>
+                {
+                    b.Navigation("Metadata");
                 });
 #pragma warning restore 612, 618
         }

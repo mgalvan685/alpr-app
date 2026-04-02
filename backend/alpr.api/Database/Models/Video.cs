@@ -22,6 +22,11 @@ public class Video
     public string FileName { get; set; } = default!;
 
     /// <summary>
+    /// Gets or sets the file system path associated with this instance.
+    /// </summary>
+    public string FilePath { get; set; } = default!;
+
+    /// <summary>
     /// Time the user uploaded the video. This timestamp is recorded at the moment of upload and is used to track when the video was added to 
     /// the system.
     /// </summary>
@@ -32,4 +37,5 @@ public class Video
     /// </summary>
     public string ProcessingStatus { get; set; } = VideoProcessingStatus.PENDING;
 
+    public virtual VideoMetadata? Metadata { get; set; }
 }
