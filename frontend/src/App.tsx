@@ -9,6 +9,7 @@ import DashboardPage from "./pages/DashboardPage";
 import PlateDetailPage from "./pages/PlateDetailPage";
 import PlatesPage from "./pages/PlatesPage";
 import { Header } from "./components/layout/Header";
+import ViewAllSightingsPage from "./pages/ViewAllSightingsPage";
 
 export default App;
 
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/upload" element={<UploadPage />} />
                     <Route path="/plates" element={<PlatesPage />} />
                     <Route path="/plates/:plate" element={<PlateDetailPage />} />
+                    <Route path="/sightings" element={<ViewAllSightingsPage />} />
                 </Routes>
             </PageContainer>
         </div>

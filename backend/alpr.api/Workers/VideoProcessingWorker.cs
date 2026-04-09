@@ -73,7 +73,7 @@ public class VideoProcessingWorker : BackgroundService
                 summary = new PlateSummary
                 {
                     Plate = d.Plate,
-                    State = "IL",
+                    IssueState = "IL",
                     TotalCount = 1,
                     LastSeen = d.Timestamp
                 };

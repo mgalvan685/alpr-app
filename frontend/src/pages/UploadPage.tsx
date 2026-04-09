@@ -3,84 +3,94 @@ import { uploadVideo } from "../api/videos";
 import { useNavigate } from "react-router-dom";
 
 export default function UploadPage() {
-  const [dragging, setDragging] = useState(false);
+  const [file, setFile] = useState<File | null>(null);
   const [uploading, setUploading] = useState(false);
-  const [progress, setProgress] = useState(0);
-
   const navigate = useNavigate();
 
-  async function handleFiles(files: FileList | null) {
-    if (!files || files.length === 0) return;
+  async function handleUpload() {
+    if (!file) return;
 
-    const file = files[0];
     setUploading(true);
 
     try {
-      // Optional: show fake progress for UX
-      const interval = setInterval(() => {
-        setProgress((p) => Math.min(p + 5, 90));
-      }, 200);
-
       const video = await uploadVideo(file);
-
-      clearInterval(interval);
-      setProgress(100);
-
-      // Redirect to the new video
       navigate(`/videos/${video.id}`);
     } catch (err) {
-      console.error(err);
-      alert("Upload failed");
+      console.error("Upload failed:", err);
       setUploading(false);
     }
   }
 
-  function onDrop(e: React.DragEvent) {
+  function handleFileSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    if (e.target.files && e.target.files.length > 0) {
+      setFile(e.target.files[0]);
+    }
+  }
+
+  function handleDrop(e: React.DragEvent<HTMLDivElement>) {
     e.preventDefault();
-    setDragging(false);
-    handleFiles(e.dataTransfer.files);
+    if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+      setFile(e.dataTransfer.files[0]);
+    }
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">Upload Video</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-foreground">Upload Video</h1>
 
+      {/* Upload Box */}
       <div
-        onDragOver={(e) => {
-          e.preventDefault();
-          setDragging(true);
-        }}
-        onDragLeave={() => setDragging(false)}
-        onDrop={onDrop}
-        className={`border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition
-          ${dragging ? "border-blue-500 bg-blue-50" : "border-border"}
-        `}
-        onClick={() => document.getElementById("fileInput")?.click()}
+        onDragOver={(e) => e.preventDefault()}
+        onDrop={handleDrop}
+        className="
+          bg-card
+          border border-border
+          rounded-lg
+          p-10
+          text-center
+          cursor-pointer
+          hover:bg-muted/50
+          transition-colors
+        "
       >
-        <p className="text-muted-foreground">
-          Drag & drop a video file here, or click to select
-        </p>
+        <input
+          type="file"
+          accept="video/*"
+          onChange={handleFileSelect}
+          className="hidden"
+          id="fileInput"
+        />
+
+        <label htmlFor="fileInput" className="cursor-pointer">
+          <div className="text-lg text-foreground mb-2">
+            {file ? file.name : "Drag & drop a video or click to select"}
+          </div>
+          <div className="text-sm text-muted-foreground">
+            Supported formats: MP4, MOV, AVI
+          </div>
+        </label>
       </div>
 
-      <input
-        id="fileInput"
-        type="file"
-        accept="video/*"
-        className="hidden"
-        onChange={(e) => handleFiles(e.target.files)}
-      />
-
-      {uploading && (
-        <div className="mt-6">
-          <div className="h-4 bg-muted rounded">
-            <div
-              className="h-4 bg-blue-600 rounded transition-all"
-              style={{ width: `${progress}%` }}
-            />
-          </div>
-          <p className="text-muted-foreground mt-2">{progress}%</p>
-        </div>
-      )}
+      {/* Upload Button */}
+      <div className="mt-6">
+        <button
+          onClick={handleUpload}
+          disabled={!file || uploading}
+          className="
+            bg-primary
+            text-primary-foreground
+            px-6 py-3
+            rounded-md
+            font-medium
+            disabled:opacity-50
+            disabled:cursor-not-allowed
+            hover:bg-primary/80
+            transition-colors
+          "
+        >
+          {uploading ? "Uploading..." : "Upload Video"}
+        </button>
+      </div>
     </div>
   );
 }

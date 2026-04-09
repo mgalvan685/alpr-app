@@ -18,7 +18,7 @@ export default function PlatesPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">Plates</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-foreground">Plates</h1>
 
       <div className="bg-card border border-border rounded-lg overflow-hidden">
         <table className="min-w-full text-left">
@@ -32,19 +32,39 @@ export default function PlatesPage() {
 
           <tbody>
             {plates.map((p) => (
-              <tr key={p.id} className="border-b hover:bg-muted/50">
-                <td className="px-4 py-3 font-mono">{p.plate}</td>
-                <td className="px-4 py-3">{p.state}</td>
+              <tr
+                key={p.id}
+                className="border-b border-border hover:bg-muted/50 transition-colors"
+              >
+                <td className="px-4 py-3 font-mono text-foreground">
+                  {p.plate}
+                </td>
+
+                <td className="px-4 py-3 text-muted-foreground">
+                  {p.issueState}
+                </td>
+
                 <td className="px-4 py-3 text-right">
                   <a
                     href={`/plates/${p.plate}`}
-                    className="text-primary hover:underline"
+                    className="text-primary hover:text-primary/80 hover:underline"
                   >
                     View
                   </a>
                 </td>
               </tr>
             ))}
+
+            {plates.length === 0 && (
+              <tr>
+                <td
+                  colSpan={3}
+                  className="px-4 py-6 text-center text-muted-foreground"
+                >
+                  No plates found.
+                </td>
+              </tr>
+            )}
           </tbody>
         </table>
       </div>

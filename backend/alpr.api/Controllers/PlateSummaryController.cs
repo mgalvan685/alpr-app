@@ -25,7 +25,7 @@ public class PlateSummaryController : ControllerBase
         return _db.PlateSummaries
             .Select(s => new PlateSummaryDto(
                 s.Plate,
-                s.State,
+                s.IssueState,
                 s.TotalCount,
                 s.LastSeen
             ))
@@ -45,7 +45,7 @@ public class PlateSummaryController : ControllerBase
 
         return new PlateSummaryDto(
             summary.Plate,
-            summary.State,
+            summary.IssueState,
             summary.TotalCount,
             summary.LastSeen
         );

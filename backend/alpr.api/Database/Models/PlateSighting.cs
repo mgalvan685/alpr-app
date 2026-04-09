@@ -19,6 +19,11 @@ public class PlateSighting
     public string Plate { get; set; } = default!;
 
     /// <summary>
+    /// The issuing state of the lickense plate. This is typically a 2-letter code (ex: "IL" for Illinois) that indicates the state that issued the plate
+    /// </summary>
+    public string IssueState { get; set; } = default!;
+
+    /// <summary>
     /// Timestamp of when the plate was sighted. This is recorded at the moment the ALPR system detects a plate in a video frame
     /// </summary>
     public DateTime Timestamp { get; set; }

@@ -27,32 +27,32 @@ export default function VideosPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">Videos</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-foreground">Videos</h1>
 
       {/* Status Filter */}
       <div className="mb-4 flex items-center gap-3">
         <label className="text-sm font-medium text-muted-foreground">
-            Filter by status:
-         </label>
+          Filter by status:
+        </label>
 
         <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="
-                bg-card
-                border border-border
-                text-foreground
-                rounded-md
-                px-3 py-2
-                focus:outline-none
-                focus:ring-2 focus:ring-ring
-            "
+          value={statusFilter}
+          onChange={(e) => setStatusFilter(e.target.value)}
+          className="
+            bg-card
+            border border-border
+            text-foreground
+            rounded-md
+            px-3 py-2
+            focus:outline-none
+            focus:ring-2 focus:ring-ring
+          "
         >
-            <option value="">All</option>
-            <option value="Pending">Pending</option>
-            <option value="Processing">Processing</option>
-            <option value="Completed">Completed</option>
-            <option value="Failed">Failed</option>
+          <option value="all">All</option>
+          <option value="Pending">Pending</option>
+          <option value="Processing">Processing</option>
+          <option value="Completed">Completed</option>
+          <option value="Failed">Failed</option>
         </select>
       </div>
 
@@ -70,16 +70,21 @@ export default function VideosPage() {
 
           <tbody>
             {filteredVideos.map((v) => (
-              <tr key={v.id} className="border-b hover:bg-muted/50">
-                <td className="px-4 py-3">{v.fileName}</td>
-                <td className="px-4 py-3">{v.processingStatus}</td>
-                <td className="px-4 py-3">
+              <tr
+                key={v.id}
+                className="border-b border-border hover:bg-muted/50 transition-colors"
+              >
+                <td className="px-4 py-3 text-foreground">{v.fileName}</td>
+                <td className="px-4 py-3 text-muted-foreground">
+                  {v.processingStatus}
+                </td>
+                <td className="px-4 py-3 text-muted-foreground">
                   {new Date(v.uploadTime).toLocaleString()}
                 </td>
                 <td className="px-4 py-3 text-right">
                   <a
                     href={`/videos/${v.id}`}
-                    className="text-primary hover:underline"
+                    className="text-primary hover:text-primary/80 hover:underline"
                   >
                     View
                   </a>

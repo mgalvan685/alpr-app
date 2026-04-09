@@ -37,6 +37,7 @@ public class AlprDbContext : DbContext
             entity.HasKey(p => p.Id);
 
             entity.Property(p => p.Plate).IsRequired();
+            entity.Property(p => p.IssueState).IsRequired();
             entity.Property(p => p.Timestamp).IsRequired();
             entity.Property(p => p.FrameNumber).IsRequired();
             entity.Property(p => p.Confidence).IsRequired();
@@ -53,7 +54,7 @@ public class AlprDbContext : DbContext
             entity.ToTable("plate_summaries");
             entity.HasKey(p => p.Plate);
 
-            entity.Property(p => p.State).IsRequired();
+            entity.Property(p => p.IssueState).IsRequired();
             entity.Property(p => p.TotalCount).IsRequired();
             entity.Property(p => p.LastSeen).IsRequired();
         });

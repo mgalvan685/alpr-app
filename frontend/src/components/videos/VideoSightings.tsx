@@ -30,7 +30,7 @@ export function VideoSightings({ sightings }: Props) {
           {sightings.map((s) => (
             <tr key={s.id} className="border-b hover:bg-muted/50">
               <td className="px-4 py-3 font-mono">{s.plate}</td>
-              <td className="px-4 py-3">{s.state}</td>
+              <td className="px-4 py-3">{s.issueState}</td>
               <td className="px-4 py-3">{(s.confidence * 100).toFixed(1)}%</td>
               <td className="px-4 py-3">{s.frameNumber}</td>
               <td className="px-4 py-3">{new Date(s.timestamp).toLocaleString()}</td>

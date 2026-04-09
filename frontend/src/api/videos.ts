@@ -35,7 +35,7 @@ export function getVideos() {
  * GET /api/videos/{id}
  * Returns a single video record
  */
-export function getVideo(id: number) {
+export function getVideoById(id: number) {
   return apiGet<VideoDto>(`/api/videos/${id}`);
 }
 

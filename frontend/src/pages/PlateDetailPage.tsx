@@ -1,9 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import {
-  getAllSightings,
-  PlateSightingDto
-} from "../api/plates";
+import { getAllSightings, PlateSightingDto } from "../api/plates";
 
 export default function PlateDetailPage() {
   const { plate } = useParams();
@@ -44,24 +41,42 @@ export default function PlateDetailPage() {
       </h1>
 
       {/* Date Filters */}
-      <div className="flex gap-4 mb-6">
-        <div>
-          <label className="block text-muted-foreground mb-1">Start Date</label>
+      <div className="flex items-center gap-4 mb-6">
+        <div className="flex flex-col">
+          <label className="text-sm text-muted-foreground mb-1">
+            Start Date
+          </label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="border rounded px-3 py-2"
+            className="
+        bg-card
+        text-foreground
+        border border-border
+        rounded-md
+        px-3 py-2
+        focus:outline-none
+        focus:ring-2 focus:ring-ring
+      "
           />
         </div>
 
-        <div>
-          <label className="block text-muted-foreground mb-1">End Date</label>
+        <div className="flex flex-col">
+          <label className="text-sm text-muted-foreground mb-1">End Date</label>
           <input
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="border rounded px-3 py-2"
+            className="
+        bg-card
+        text-foreground
+        border border-border
+        rounded-md
+        px-3 py-2
+        focus:outline-none
+        focus:ring-2 focus:ring-ring
+      "
           />
         </div>
       </div>
@@ -82,7 +97,7 @@ export default function PlateDetailPage() {
           <tbody>
             {filteredSightings.map((s) => (
               <tr key={s.id} className="border-b hover:bg-muted/50">
-                <td className="px-4 py-3">{s.state}</td>
+                <td className="px-4 py-3">{s.issueState}</td>
                 <td className="px-4 py-3">
                   {(s.confidence * 100).toFixed(1)}%
                 </td>

@@ -8,6 +8,7 @@ export function Sidebar() {
         <a href="/videos" className="block hover:text-accent">Videos</a>
         <a href="/plates" className="block hover:text-accent">Plates</a>
         <a href="/upload" className="block hover:text-accent">Upload Video</a>
+        <a href="/sightings" className="block hover:text-accent">All Sightings</a>
       </nav>
     </div>
   );

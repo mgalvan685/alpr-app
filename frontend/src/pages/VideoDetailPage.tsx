@@ -1,91 +1,120 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-
-import {
-  getVideo,
-  getVideoMetadata,
-  VideoDto
-} from "../api/videos";
-
-import {
-  getPlateSightingsForVideo,
-  PlateSightingDto
-} from "../api/plates";
-
-import { VideoSightings } from "../components/videos/VideoSightings";
+import { getVideoById, VideoDto } from "../api/videos";
+import { getPlateSightingsForVideo, PlateSightingDto } from "../api/plates";
 
 export default function VideoDetailPage() {
   const { id } = useParams();
-  const videoId = Number(id);
-
   const [video, setVideo] = useState<VideoDto | null>(null);
-  const [metadata, setMetadata] = useState<any>(null);
   const [sightings, setSightings] = useState<PlateSightingDto[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     async function load() {
-      try {
-        const v = await getVideo(videoId);
-        setVideo(v);
+      const v = await getVideoById(Number(id));
+      const s = await getPlateSightingsForVideo(Number(id));
 
-        const m = await getVideoMetadata(videoId);
-        setMetadata(m);
-
-        const s = await getPlateSightingsForVideo(videoId);
-        setSightings(s);
-      } finally {
-        setLoading(false);
-      }
+      setVideo(v);
+      setSightings(s);
+      setLoading(false);
     }
 
     load();
-  }, [videoId]);
+  }, [id]);
 
   if (loading) {
     return <div className="text-muted-foreground">Loading video...</div>;
   }
 
   if (!video) {
-    return <div className="text-red-600">Video not found.</div>;
+    return (
+      <div className="text-muted-foreground">
+        Video not found or failed to load.
+      </div>
+    );
   }
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold mb-6">{video.fileName}</h1>
+      <h1 className="text-2xl font-semibold mb-6 text-foreground">
+        Video Details
+      </h1>
 
-      {/* Metadata Card */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <VideoMetadataCard video={video} metadata={metadata} />
+      {/* Video Metadata */}
+      <div className="bg-card border border-border rounded-lg p-6 mb-10">
+        <div className="text-lg font-medium text-foreground mb-2">
+          {video.fileName}
+        </div>
+
+        <div className="text-muted-foreground space-y-1">
+          <div>
+            <span className="font-medium text-foreground">Status:</span>{" "}
+            {video.processingStatus}
+          </div>
+          <div>
+            <span className="font-medium text-foreground">Uploaded:</span>{" "}
+            {new Date(video.uploadTime).toLocaleString()}
+          </div>
+        </div>
       </div>
 
       {/* Sightings Table */}
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold mb-4">Plate Sightings</h2>
-        <VideoSightings sightings={sightings} />
-      </div>
-    </div>
-  );
-}
+      <h2 className="text-xl font-semibold mb-4 text-foreground">
+        Sightings in This Video
+      </h2>
 
-function VideoMetadataCard({ video, metadata }: any) {
-  return (
-    <div className="bg-card border border-border rounded-lg p-6">
-      <h2 className="text-lg font-semibold mb-4">Metadata</h2>
+      <div className="bg-card border border-border rounded-lg overflow-hidden">
+        <table className="min-w-full text-left">
+          <thead className="bg-muted text-muted-foreground">
+            <tr>
+              <th className="px-4 py-3">Plate</th>
+              <th className="px-4 py-3">State</th>
+              <th className="px-4 py-3">Timestamp</th>
+              <th className="px-4 py-3"></th>
+            </tr>
+          </thead>
 
-      <div className="space-y-2 text-muted-foreground">
-        <div><strong>Status:</strong> {video.processingStatus}</div>
-        <div><strong>Resolution:</strong> {video.width}×{video.height}</div>
-        <div><strong>FPS:</strong> {video.frameRate}</div>
-        <div><strong>Duration:</strong> {video.durationSeconds}s</div>
+          <tbody>
+            {sightings.map((s) => (
+              <tr
+                key={s.id}
+                className="border-b border-border hover:bg-muted/50 transition-colors"
+              >
+                <td className="px-4 py-3 font-mono text-foreground">
+                  {s.plate}
+                </td>
 
-        {metadata && (
-          <>
-            <div><strong>Codec:</strong> {metadata.codec}</div>
-            <div><strong>Bitrate:</strong> {metadata.bitrate}</div>
-            <div><strong>Format:</strong> {metadata.format}</div>
-          </>
-        )}
+                <td className="px-4 py-3 text-muted-foreground">
+                  {s.issueState}
+                </td>
+
+                <td className="px-4 py-3 text-muted-foreground">
+                  {new Date(s.timestamp).toLocaleString()}
+                </td>
+
+                <td className="px-4 py-3 text-right">
+                  <a
+                    href={`/plates/${s.plate}`}
+                    className="text-primary hover:text-primary/80 hover:underline"
+                  >
+                    View Plate
+                  </a>
+                </td>
+              </tr>
+            ))}
+
+            {sightings.length === 0 && (
+              <tr>
+                <td
+                  colSpan={4}
+                  className="px-4 py-6 text-center text-muted-foreground"
+                >
+                  No sightings found for this video.
+                </td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -3,12 +3,12 @@ import { apiGet } from "./apiClient";
 export interface PlateDto {
   id: number;
   plate: string;
-  state: string;
+  issueState: string;
 }
 
 export interface PlateSummaryDto {
   plate: string;
-  state: string;
+  issueState: string;
   totalCount: number;
   lastSeen: string;
 }
@@ -16,7 +16,7 @@ export interface PlateSummaryDto {
 export interface PlateSightingDto {
   id: number;
   plate: string;
-  state: string;
+  issueState?: string;
   timestamp: string;
   frameNumber: number;
   confidence: number;

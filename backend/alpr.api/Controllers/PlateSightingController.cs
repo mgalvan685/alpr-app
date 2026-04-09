@@ -29,6 +29,7 @@ public class PlateSightingController : ControllerBase
             .Select(s => new PlateSightingDto(
                 s.Id,
                 s.Plate,
+                s.IssueState,
                 s.Timestamp,
                 s.VideoId,
                 s.FrameNumber,
@@ -50,6 +51,7 @@ public class PlateSightingController : ControllerBase
             .Select(s => new PlateSightingDto(
                 s.Id,
                 s.Plate,
+                s.IssueState,
                 s.Timestamp,
                 s.VideoId,
                 s.FrameNumber,
