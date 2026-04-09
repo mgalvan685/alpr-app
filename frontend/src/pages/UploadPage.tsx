@@ -53,11 +53,11 @@ export default function UploadPage() {
         onDragLeave={() => setDragging(false)}
         onDrop={onDrop}
         className={`border-2 border-dashed rounded-lg p-10 text-center cursor-pointer transition
-          ${dragging ? "border-blue-500 bg-blue-50" : "border-gray-300"}
+          ${dragging ? "border-blue-500 bg-blue-50" : "border-border"}
         `}
         onClick={() => document.getElementById("fileInput")?.click()}
       >
-        <p className="text-gray-700">
+        <p className="text-muted-foreground">
           Drag & drop a video file here, or click to select
         </p>
       </div>
@@ -72,13 +72,13 @@ export default function UploadPage() {
 
       {uploading && (
         <div className="mt-6">
-          <div className="h-4 bg-gray-200 rounded">
+          <div className="h-4 bg-muted rounded">
             <div
               className="h-4 bg-blue-600 rounded transition-all"
               style={{ width: `${progress}%` }}
             />
           </div>
-          <p className="text-gray-600 mt-2">{progress}%</p>
+          <p className="text-muted-foreground mt-2">{progress}%</p>
         </div>
       )}
     </div>

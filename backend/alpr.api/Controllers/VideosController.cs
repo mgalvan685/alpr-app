@@ -9,7 +9,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace alpr.api.Controllers;
 
-[Route("[controller]")]
+[Route("api/[controller]")]
 [ApiController]
 public class VideosController : ControllerBase
 {
@@ -100,9 +100,10 @@ public class VideosController : ControllerBase
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public IEnumerable<VideoDto> GetAll()
+    public ActionResult<VideoDto> GetAll()
     {
-        return _db.Videos
+        var videos = _db.Videos
+            .AsNoTracking()
             .Select(v => new VideoDto(
                 v.Id,
                 v.FileName,
@@ -110,6 +111,8 @@ public class VideosController : ControllerBase
                 v.ProcessingStatus
             ))
             .ToList();
+
+        return Ok(videos);
     }
 
     /// <summary>

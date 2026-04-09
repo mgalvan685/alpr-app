@@ -7,16 +7,16 @@ interface Props {
 export function VideoSightings({ sightings }: Props) {
   if (sightings.length === 0) {
     return (
-      <div className="bg-white shadow rounded-lg p-6 text-gray-600">
+      <div className="bg-card border border-border rounded-lg p-6 text-muted-foreground">
         No plate detections found for this video.
       </div>
     );
   }
 
   return (
-    <div className="bg-white shadow rounded-lg overflow-hidden">
+    <div className="bg-card border border-border rounded-lg overflow-hidden">
       <table className="min-w-full text-left">
-        <thead className="bg-gray-100 text-gray-700">
+        <thead className="bg-muted text-muted-foreground">
           <tr>
             <th className="px-4 py-3">Plate</th>
             <th className="px-4 py-3">State</th>
@@ -28,7 +28,7 @@ export function VideoSightings({ sightings }: Props) {
 
         <tbody>
           {sightings.map((s) => (
-            <tr key={s.id} className="border-b hover:bg-gray-50">
+            <tr key={s.id} className="border-b hover:bg-muted/50">
               <td className="px-4 py-3 font-mono">{s.plate}</td>
               <td className="px-4 py-3">{s.state}</td>
               <td className="px-4 py-3">{(s.confidence * 100).toFixed(1)}%</td>

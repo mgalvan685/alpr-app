@@ -1,5 +1,6 @@
 //const API_BASE_URL = "http://localhost:5001";
-const API_BASE_URL = "http://localhost:7280";
+//const API_BASE_URL = "http://localhost:7280";
+const API_BASE_URL = "https://localhost:7280";
 
 export async function apiGet<T>(url: string): Promise<T> {
   const response = await fetch(`${API_BASE_URL}${url}`);

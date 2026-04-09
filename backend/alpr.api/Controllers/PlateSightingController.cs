@@ -1,11 +1,12 @@
 ﻿using alpr.api.Database;
 using alpr.api.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace alpr.api.Controllers;
 
 [ApiController]
-[Route("platesightings")]
+[Route("api/[controller]")]
 public class PlateSightingController : ControllerBase
 {
     private readonly AlprDbContext _db;
@@ -18,10 +19,13 @@ public class PlateSightingController : ControllerBase
     }
 
     #region GET
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public IEnumerable<PlateSightingDto> GetAll()
+    public ActionResult<IEnumerable<PlateSightingDto>> GetAll()
     {
-        return _db.PlateSightings
+        var plateSightings = _db.PlateSightings
+            .AsNoTracking()
             .Select(s => new PlateSightingDto(
                 s.Id,
                 s.Plate,
@@ -31,12 +35,17 @@ public class PlateSightingController : ControllerBase
                 s.Confidence
             ))
             .ToList();
+
+        return Ok(plateSightings);
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("video/{videoId:int}")]
-    public IEnumerable<PlateSightingDto> GetByVideo(int videoId)
+    public ActionResult<IEnumerable<PlateSightingDto>> GetByVideo(int videoId)
     {
-        return _db.PlateSightings
+        var plateSightings = _db.PlateSightings
+            .AsNoTracking()
             .Where(s => s.VideoId == videoId)
             .Select(s => new PlateSightingDto(
                 s.Id,
@@ -47,6 +56,8 @@ public class PlateSightingController : ControllerBase
                 s.Confidence
             ))
             .ToList();
+
+        return Ok(plateSightings);
     }
     #endregion
 }

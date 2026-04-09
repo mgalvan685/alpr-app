@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import {
-  getSightingsForPlate,
+  getAllSightings,
   PlateSightingDto
 } from "../api/plates";
 
@@ -17,14 +17,14 @@ export default function PlateDetailPage() {
   useEffect(() => {
     if (!plate) return;
 
-    getSightingsForPlate(plate).then((data) => {
+    getAllSightings().then((data) => {
       setSightings(data);
       setLoading(false);
     });
   }, [plate]);
 
   if (loading) {
-    return <div className="text-gray-600">Loading plate...</div>;
+    return <div className="text-muted-foreground">Loading plate...</div>;
   }
 
   // Apply date filtering
@@ -46,7 +46,7 @@ export default function PlateDetailPage() {
       {/* Date Filters */}
       <div className="flex gap-4 mb-6">
         <div>
-          <label className="block text-gray-700 mb-1">Start Date</label>
+          <label className="block text-muted-foreground mb-1">Start Date</label>
           <input
             type="date"
             value={startDate}
@@ -56,7 +56,7 @@ export default function PlateDetailPage() {
         </div>
 
         <div>
-          <label className="block text-gray-700 mb-1">End Date</label>
+          <label className="block text-muted-foreground mb-1">End Date</label>
           <input
             type="date"
             value={endDate}
@@ -67,9 +67,9 @@ export default function PlateDetailPage() {
       </div>
 
       {/* Sightings Table */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-card border border-border rounded-lg overflow-hidden">
         <table className="min-w-full text-left">
-          <thead className="bg-gray-100 text-gray-700">
+          <thead className="bg-muted text-muted-foreground">
             <tr>
               <th className="px-4 py-3">State</th>
               <th className="px-4 py-3">Confidence</th>
@@ -81,7 +81,7 @@ export default function PlateDetailPage() {
 
           <tbody>
             {filteredSightings.map((s) => (
-              <tr key={s.id} className="border-b hover:bg-gray-50">
+              <tr key={s.id} className="border-b hover:bg-muted/50">
                 <td className="px-4 py-3">{s.state}</td>
                 <td className="px-4 py-3">
                   {(s.confidence * 100).toFixed(1)}%
@@ -93,7 +93,7 @@ export default function PlateDetailPage() {
                 <td className="px-4 py-3">
                   <a
                     href={`/videos/${s.videoId}`}
-                    className="text-blue-600 hover:underline"
+                    className="text-primary hover:underline"
                   >
                     View Video
                   </a>
@@ -105,7 +105,7 @@ export default function PlateDetailPage() {
               <tr>
                 <td
                   colSpan={5}
-                  className="px-4 py-6 text-center text-gray-600"
+                  className="px-4 py-6 text-center text-muted-foreground"
                 >
                   No sightings match this filter.
                 </td>

@@ -10,6 +10,8 @@ import PlateDetailPage from "./pages/PlateDetailPage";
 import PlatesPage from "./pages/PlatesPage";
 import { Header } from "./components/layout/Header";
 
+export default App;
+
 function App() {
   return (
     <BrowserRouter>

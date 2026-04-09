@@ -16,7 +16,7 @@ export default function VideosPage() {
   }, []);
 
   if (loading) {
-    return <div className="text-gray-600">Loading videos...</div>;
+    return <div className="text-muted-foreground">Loading videos...</div>;
   }
 
   // Apply filter
@@ -30,24 +30,36 @@ export default function VideosPage() {
       <h1 className="text-2xl font-semibold mb-6">Videos</h1>
 
       {/* Status Filter */}
-      <div className="mb-4">
+      <div className="mb-4 flex items-center gap-3">
+        <label className="text-sm font-medium text-muted-foreground">
+            Filter by status:
+         </label>
+
         <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value)}
-          className="border rounded px-3 py-2"
+            value={statusFilter}
+            onChange={(e) => setStatusFilter(e.target.value)}
+            className="
+                bg-card
+                border border-border
+                text-foreground
+                rounded-md
+                px-3 py-2
+                focus:outline-none
+                focus:ring-2 focus:ring-ring
+            "
         >
-          <option value="all">All Statuses</option>
-          <option value="Pending">Pending</option>
-          <option value="Processing">Processing</option>
-          <option value="Completed">Completed</option>
-          <option value="Failed">Failed</option>
+            <option value="">All</option>
+            <option value="Pending">Pending</option>
+            <option value="Processing">Processing</option>
+            <option value="Completed">Completed</option>
+            <option value="Failed">Failed</option>
         </select>
       </div>
 
       {/* Videos Table */}
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-card border border-border rounded-lg overflow-hidden">
         <table className="min-w-full text-left">
-          <thead className="bg-gray-100 text-gray-700">
+          <thead className="bg-muted text-muted-foreground">
             <tr>
               <th className="px-4 py-3">File Name</th>
               <th className="px-4 py-3">Status</th>
@@ -58,7 +70,7 @@ export default function VideosPage() {
 
           <tbody>
             {filteredVideos.map((v) => (
-              <tr key={v.id} className="border-b hover:bg-gray-50">
+              <tr key={v.id} className="border-b hover:bg-muted/50">
                 <td className="px-4 py-3">{v.fileName}</td>
                 <td className="px-4 py-3">{v.processingStatus}</td>
                 <td className="px-4 py-3">
@@ -67,7 +79,7 @@ export default function VideosPage() {
                 <td className="px-4 py-3 text-right">
                   <a
                     href={`/videos/${v.id}`}
-                    className="text-blue-600 hover:underline"
+                    className="text-primary hover:underline"
                   >
                     View
                   </a>
@@ -79,7 +91,7 @@ export default function VideosPage() {
               <tr>
                 <td
                   colSpan={4}
-                  className="px-4 py-6 text-center text-gray-600"
+                  className="px-4 py-6 text-center text-muted-foreground"
                 >
                   No videos match this filter.
                 </td>

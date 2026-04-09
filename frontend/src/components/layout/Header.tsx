@@ -14,14 +14,14 @@ export function Header() {
   }
 
   return (
-    <div className="w-full bg-white shadow px-6 py-4 flex items-center">
+    <div className="w-full bg-background border border-border px-6 py-4 flex items-center">
       <form onSubmit={onSubmit} className="flex-1">
         <input
           type="text"
           placeholder="Search plates…"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
-          className="w-80 border rounded px-3 py-2 text-gray-700"
+          className="w-80 border border-input rounded px-3 py-2 text-foreground bg-background"
         />
       </form>
     </div>

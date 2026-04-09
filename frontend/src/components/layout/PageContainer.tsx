@@ -6,7 +6,7 @@ interface Props {
 
 export function PageContainer({ children }: Props) {
   return (
-    <div className="flex-1 p-6 bg-gray-100 min-h-screen">
+    <div className="flex-1 p-6 bg-background min-h-screen">
       {children}
     </div>
   );

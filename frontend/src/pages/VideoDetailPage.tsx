@@ -43,7 +43,7 @@ export default function VideoDetailPage() {
   }, [videoId]);
 
   if (loading) {
-    return <div className="text-gray-600">Loading video...</div>;
+    return <div className="text-muted-foreground">Loading video...</div>;
   }
 
   if (!video) {
@@ -70,10 +70,10 @@ export default function VideoDetailPage() {
 
 function VideoMetadataCard({ video, metadata }: any) {
   return (
-    <div className="bg-white shadow rounded-lg p-6">
+    <div className="bg-card border border-border rounded-lg p-6">
       <h2 className="text-lg font-semibold mb-4">Metadata</h2>
 
-      <div className="space-y-2 text-gray-700">
+      <div className="space-y-2 text-muted-foreground">
         <div><strong>Status:</strong> {video.processingStatus}</div>
         <div><strong>Resolution:</strong> {video.width}×{video.height}</div>
         <div><strong>FPS:</strong> {video.frameRate}</div>

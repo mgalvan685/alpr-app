@@ -7,7 +7,7 @@ interface Props {
 
 export function VideoListItem({ video }: Props) {
   return (
-    <tr className="border-b hover:bg-gray-50">
+    <tr className="border-b hover:bg-muted/50">
       <td className="px-4 py-3">{video.fileName}</td>
       <td className="px-4 py-3">
         {formatResolution(video.width, video.height)}
@@ -24,7 +24,7 @@ export function VideoListItem({ video }: Props) {
       <td className="px-4 py-3 text-right">
         <a
           href={`/videos/${video.id}`}
-          className="text-blue-600 hover:underline"
+          className="text-primary hover:underline"
         >
           View
         </a>
@@ -42,6 +42,6 @@ function statusColor(status: string) {
     case "FAILED":
       return "bg-red-100 text-red-700";
     default:
-      return "bg-gray-100 text-gray-700";
+      return "bg-muted text-muted-foreground";
   }
 }

@@ -13,16 +13,16 @@ export default function PlatesPage() {
   }, []);
 
   if (loading) {
-    return <div className="text-gray-600">Loading plates...</div>;
+    return <div className="text-muted-foreground">Loading plates...</div>;
   }
 
   return (
     <div>
       <h1 className="text-2xl font-semibold mb-6">Plates</h1>
 
-      <div className="bg-white shadow rounded-lg overflow-hidden">
+      <div className="bg-card border border-border rounded-lg overflow-hidden">
         <table className="min-w-full text-left">
-          <thead className="bg-gray-100 text-gray-700">
+          <thead className="bg-muted text-muted-foreground">
             <tr>
               <th className="px-4 py-3">Plate</th>
               <th className="px-4 py-3">State</th>
@@ -32,13 +32,13 @@ export default function PlatesPage() {
 
           <tbody>
             {plates.map((p) => (
-              <tr key={p.id} className="border-b hover:bg-gray-50">
+              <tr key={p.id} className="border-b hover:bg-muted/50">
                 <td className="px-4 py-3 font-mono">{p.plate}</td>
                 <td className="px-4 py-3">{p.state}</td>
                 <td className="px-4 py-3 text-right">
                   <a
                     href={`/plates/${p.plate}`}
-                    className="text-blue-600 hover:underline"
+                    className="text-primary hover:underline"
                   >
                     View
                   </a>

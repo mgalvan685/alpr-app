@@ -5,7 +5,7 @@ using alpr.api.DTOs;
 namespace alpr.api.Controllers;
 
 [ApiController]
-[Route("platesummaries")]
+[Route("api/[controller]")]
 public class PlateSummaryController : ControllerBase
 {
     private readonly AlprDbContext _db;
@@ -17,6 +17,8 @@ public class PlateSummaryController : ControllerBase
         //_logger = logger;
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
     public IEnumerable<PlateSummaryDto> GetAll()
     {
@@ -30,6 +32,9 @@ public class PlateSummaryController : ControllerBase
             .ToList();
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("{plate}")]
     public ActionResult<PlateSummaryDto> GetByPlate(string plate)
     {

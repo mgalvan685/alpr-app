@@ -1,75 +1,111 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using alpr.api.Database;
 using alpr.api.Database.Models;
+using alpr.api.DTOs;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace alpr.api.Controllers;
 
-[Route("[controller]")]
 [ApiController]
+[Route("api/[controller]")]
 public class PlatesController : ControllerBase
 {
-    // In-memory store; in a real app this would be a database/service
-    private static readonly List<PlateSighting> _sightings = new();
-    private static readonly object _lock = new();
+    private readonly AlprDbContext _db;
 
-    // For demonstration: an endpoint to add a sighting (not requested but useful for testing)
-    [HttpPost]
-    public ActionResult<PlateSighting> Add([FromBody] PlateSighting sighting)
+    public PlatesController(AlprDbContext db)
     {
-        if (sighting == null || string.IsNullOrWhiteSpace(sighting.Plate)) return BadRequest();
-        lock (_lock)
-        {
-            sighting.Id = _sightings.Count > 0 ? _sightings.Max(s => s.Id) + 1 : 1;
-            sighting.Timestamp = sighting.Timestamp == default ? DateTime.UtcNow : sighting.Timestamp;
-            _sightings.Add(sighting);
-        }
-        return CreatedAtAction(nameof(GetById), new { id = sighting.Id }, sighting);
+        _db = db;
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public ActionResult<IEnumerable<PlateSighting>> GetAllSightings()
+    public async Task<ActionResult<IEnumerable<PlateSightingDto>>> GetAllSightings()
     {
-        return Ok(_sightings.OrderByDescending(s => s.Timestamp));
+        var sightings = await _db.PlateSightings
+            .AsNoTracking()
+            .Select(s => new PlateSightingDto(
+                s.Id,
+                s.Plate,
+                s.Timestamp,
+                s.VideoId,
+                s.FrameNumber,
+                s.Confidence
+            ))
+            .ToListAsync();
+
+        return Ok(sightings);
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("summaries")]
-    public ActionResult<IEnumerable<PlateSummary>> GetSummaries()
+    public async Task<ActionResult<IEnumerable<PlateSummaryDto>>> GetSummaries()
     {
-        var summaries = _sightings
+        var summaries = await _db.PlateSightings
+            .AsNoTracking()
             .GroupBy(s => s.Plate)
-            .Select(g => new PlateSummary
-            {
-                Plate = g.Key,
-                TotalCount = g.Count(),
-                LastSeen = g.Max(x => x.Timestamp)
-            })
-            .OrderByDescending(p => p.LastSeen)
-            .ToList();
+            .Select(g => new PlateSummaryDto(
+                g.Key,
+                "", // TODO: Fix state lookup
+                g.Count(),
+                g.Max(x => x.Timestamp)
+            ))
+            .OrderByDescending(s => s.LastSeen)
+            .ToListAsync();
 
         return Ok(summaries);
     }
 
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("byplate/{plate}")]
-    public ActionResult<PlateSummary> GetByPlate(string plate)
+    public async Task<ActionResult<PlateSummaryDto>> GetByPlate(string plate)
     {
-        if (string.IsNullOrWhiteSpace(plate)) return BadRequest();
+        if (string.IsNullOrWhiteSpace(plate))
+            return BadRequest();
 
-        var group = _sightings.Where(s => string.Equals(s.Plate, plate, StringComparison.OrdinalIgnoreCase));
-        if (!group.Any()) return NotFound();
+        var group = await _db.PlateSightings
+            .AsNoTracking()
+            .Where(s => s.Plate.ToLower() == plate.ToLower())
+            .ToListAsync();
 
-        var summary = new PlateSummary
-        {
-            Plate = plate,
-            TotalCount = group.Count(),
-            LastSeen = group.Max(s => s.Timestamp)
-        };
+        if (!group.Any())
+            return NotFound();
+
+        var summary = new PlateSummaryDto(
+            plate,
+            "", // TODO: Fix state lookup
+            group.Count,
+            group.Max(s => s.Timestamp)
+        );
+
         return Ok(summary);
     }
 
-    [HttpGet("{id}")]
-    public ActionResult<PlateSighting> GetById(int id)
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpGet("{id:int}")]
+    public async Task<ActionResult<PlateSightingDto>> GetById(int id)
     {
-        var sighting = _sightings.FirstOrDefault(s => s.Id == id);
-        if (sighting == null) return NotFound();
-        return Ok(sighting);
+        var s = await _db.PlateSightings
+            .AsNoTracking()
+            .Where(x => x.Id == id)
+            .Select(x => new PlateSightingDto(
+                x.Id,
+                x.Plate,
+                x.Timestamp,
+                x.VideoId,
+                x.FrameNumber,
+                x.Confidence
+            ))
+            .FirstOrDefaultAsync();
+
+        if (s == null)
+            return NotFound();
+
+        return Ok(s);
     }
 }
