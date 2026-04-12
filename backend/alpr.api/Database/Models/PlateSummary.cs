@@ -17,7 +17,7 @@ public class PlateSummary
     /// <summary>
     /// The 2 letter state the plat is from (ex: "IL" for Illinois)
     /// </summary>
-    public string IssueState { get; set; } = default!;
+    public string? IssueState { get; set; } = default!;
 
     /// <summary>
     /// How many times the plate appeared in all uploaded videos

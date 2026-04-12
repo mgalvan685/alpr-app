@@ -27,6 +27,7 @@ secrets.json
 Uploads/
 uploads/
 wwwroot/uploads/
+storage/
 
 # Database files
 *.db

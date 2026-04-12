@@ -1,0 +1,107 @@
+# Visual Studio / Visual C++ .gitignore
+# Generated for Visual Studio C++ projects
+
+# User-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.vcxproj.user
+*.vcxproj.filters.user
+*.dbmdl
+
+# Visual Studio cache and temporary files
+.vs/
+ipch/
+*.VC.db
+*.VC.opendb
+
+# Visual Studio x64 build folders
+x64/
+x64/Release/
+x64/Debug/
+
+# Build results
+[Bb]in/
+[Oo]bj/
+build/
+cmake-build*/
+cmake_install.cmake
+CMakeFiles/
+CMakeCache.txt
+Makefile
+
+# Visual C++ compiled output
+*.exe
+*.dll
+*.pdb
+*.ilk
+*.obj
+*.lib
+*.idb
+*.ipdb
+*.exp
+
+# Static and shared libraries
+*.a
+*.so
+*.so.*
+*.dylib
+
+# NuGet
+*.nupkg
+packages/
+project.lock.json
+project.nuget.cache
+
+# JetBrains Rider/CLion
+.idea/
+
+# VS Code workspace settings
+.vscode/
+
+# Logs and test results
+*.log
+TestResults/
+*.trx
+coverage/
+
+# Installer output
+*.msi
+*.cab
+*.msm
+
+# Other files to ignore
+*.DS_Store
+Thumbs.db
+desktop.ini
+*.~*
+*.swp
+*.swn
+
+# CMake generated files
+CTestTestfile.cmake
+Testing/
+
+# Third-party / dependency directories
+third_party/
+extern/
+
+# Temporary files
+*.tmp
+*.temp
+
+# Generated precompiled header files
+*.pch
+.pch/
+
+# Ignore local build configuration files
+*.userprops
+
+# Keep the repository clean for Visual Studio ephemeral files
+*.[Pp]db
+*.idb
+
+# Add any project-specific ignores below
+# e.g. leave the following commented line as a hint for build folder
+# /AlprEngine/Build/

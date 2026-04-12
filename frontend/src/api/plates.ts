@@ -3,12 +3,12 @@ import { apiGet } from "./apiClient";
 export interface PlateDto {
   id: number;
   plate: string;
-  issueState: string;
+  issueState?: string;
 }
 
 export interface PlateSummaryDto {
   plate: string;
-  issueState: string;
+  issueState?: string;
   totalCount: number;
   lastSeen: string;
 }

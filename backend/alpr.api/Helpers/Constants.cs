@@ -21,6 +21,7 @@ public static class VideoConstants
     };
 
     // 500 MB limit for uploaded videos; adjust as needed based on expected use cases and server capabilities
-    public const long MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB
+    //public const long MAX_FILE_SIZE = 500 * 1024 * 1024; // 500 MB
+    public const long MAX_FILE_SIZE = 600L * 1024L * 1024L; // 600 MB
 }
 

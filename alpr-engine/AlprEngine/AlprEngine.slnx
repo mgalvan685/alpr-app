@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="AlprEngine/AlprEngine.vcxproj" Id="c6d502af-bf5f-4f44-9616-9ecf1a5d58bd" />
+</Solution>

@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using alpr.api.Database;
@@ -11,9 +12,11 @@ using alpr.api.Database;
 namespace alpr.api.Database.Migrations
 {
     [DbContext(typeof(AlprDbContext))]
-    partial class AlprDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260411063243_MakeIssueStateNullable")]
+    partial class MakeIssueStateNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -68,6 +71,7 @@ namespace alpr.api.Database.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("IssueState")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<string>("Plate")
@@ -93,6 +97,7 @@ namespace alpr.api.Database.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("IssueState")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("LastSeen")
