@@ -1,21 +1,28 @@
 ﻿using alpr.api.Database;
 using alpr.api.Database.Models;
+using alpr.api.Helpers;
 using alpr.api.Services.Helpers;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
+using System.Text;
 
 namespace alpr.api.Services;
 
 public class VideoProcessingService : BackgroundService
 {
     private readonly IServiceProvider _serviceProvider;
+    private readonly ILogger<VideoProcessingService> _logger;
 
-    public VideoProcessingService(IServiceProvider serviceProvider)
+    public VideoProcessingService(IServiceProvider serviceProvider, ILogger<VideoProcessingService> logger)
     {
         _serviceProvider = serviceProvider;
+        _logger = logger;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
+        var stopWatch = new Stopwatch();
+
         while (!stoppingToken.IsCancellationRequested)
         {
             using var scope = _serviceProvider.CreateScope();
@@ -36,36 +43,52 @@ public class VideoProcessingService : BackgroundService
 
                     // Extract frames
                     var tempFolder = Path.Combine("temp_frames", $"video_{video.Id}");
+
+                    stopWatch.StartTimer();
                     var frames = await FrameExtractor.ExtractFramesAsync(video.FilePath, tempFolder, 500);
-
-                    // Test the C++ ALPR engine
-                    foreach (var frame in frames)
-                    {
-                        var result = AlprEngine.Analyze(frame);
-
-                        Console.WriteLine(
-                            $"Frame: {Path.GetFileName(frame)} → Found={result.found}, Plate={result.plate}, State={result.state}, Conf={result.confidence}"
-                        );
-                    }
+                    _logger.LogInformation("Extracted {FrameCount} frames from video {VideoId} in {ElapsedMilliseconds} ms", frames.Count, video.Id, stopWatch.StopAndGetElapsed());
 
                     // Run ALPR on each frame
                     foreach (var frame in frames)
                     {
-                        var result = AlprEngine.Analyze(frame);
+                        _logger.LogInformation("Processing frame {Frame} for video {VideoId}", frame, video.Id);
 
-                        if (result.found)
+                        var plate = new StringBuilder(32);
+                        var state = new StringBuilder(16);
+                        float confidence;
+
+                        stopWatch.StartTimer();
+                        int found = AlprEngine.ProcessFrame(frame, plate, state, out confidence);
+                        _logger.LogInformation("Processed frame {Frame} for video {VideoId} in {ElapsedMilliseconds} - Found: {Found}, Plate: {Plate}, State: {State}, Confidence: {Confidence}", frame, video.Id, stopWatch.StopAndGetElapsed(), found, plate.ToString(), state.ToString(), confidence);
+
+                        if (found == 1)
                         {
+                            _logger.LogInformation(
+                                "Detection: Plate={Plate}, State={State}, Confidence={Confidence}",
+                                plate, state, confidence
+                            );
+
                             var sighting = new PlateSighting
                             {
-                                Plate = result.plate,
-                                IssueState = result.state,
-                                Confidence = result.confidence,
+                                Plate = plate.ToString(),
+                                IssueState = state.ToString(),
+                                Confidence = confidence,
                                 Timestamp = ExtractTimestampFromFrameName(frame, video.UploadTime),
                                 VideoId = video.Id
                             };
 
                             db.PlateSightings.Add(sighting);
                             await db.SaveChangesAsync(stoppingToken);
+
+                            _logger.LogInformation(
+                                "Saved sighting for plate {Plate} at timestamp {Timestamp}",
+                                sighting.Plate,
+                                sighting.Timestamp
+                            );
+                        }
+                        else
+                        {
+                            _logger.LogInformation("No plate detected in frame {FramePath}", frame);
                         }
                     }
 
@@ -78,6 +101,7 @@ public class VideoProcessingService : BackgroundService
                 catch (Exception ex)
                 {
                     video.ProcessingStatus = "Failed";
+                    Console.WriteLine(ex.ToString());
                     await db.SaveChangesAsync(stoppingToken);
                 }
             }

@@ -6,7 +6,7 @@ namespace alpr.api.Services;
 public static class AlprEngine
 {
     [DllImport("AlprEngine.dll", CallingConvention = CallingConvention.Cdecl)]
-    private static extern int ProcessFrame(
+    public static extern int ProcessFrame(
         string imagePath,
         StringBuilder plateOut,
         StringBuilder stateOut,

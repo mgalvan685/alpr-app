@@ -282,7 +282,12 @@ dotnet run
 
 # Terminal 2
 cd frontend
+npm install
 npm run dev
 ```
 
 Once running, open the dashboard in your browser and upload a video to begin processing.
+
+### 6. Note To Self
+
+I still need to add instructions for Docker setup.
