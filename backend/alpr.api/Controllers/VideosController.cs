@@ -17,9 +17,7 @@ public class VideosController : ControllerBase
     private readonly ILogger<VideosController> _logger;
     private readonly IVideoMetadataService _metadataService;
 
-    private static readonly List<Video> _videos = new();
-    private static int _nextId = 1;
-    private static readonly object _lock = new();
+    //private static readonly object _lock = new();
 
     public VideosController(AlprDbContext db, ILogger<VideosController> logger, IVideoMetadataService metadataService)
     {

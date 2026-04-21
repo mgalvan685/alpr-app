@@ -3,7 +3,7 @@
 public record PlateSummaryDto
 {
     public string Plate { get; init; } = default!;
-    public string State { get; init; } = default!;
+    public string? IssueState { get; init; } = default!;
     public int TotalCount { get; init; }
     public DateTime LastSeen { get; init; }
 
@@ -12,7 +12,7 @@ public record PlateSummaryDto
     public PlateSummaryDto(string plate, string state, int totalCount, DateTime lastSeen)
     {
         Plate = plate;
-        State = state;
+        IssueState = state;
         TotalCount = totalCount;
         LastSeen = lastSeen;
     }

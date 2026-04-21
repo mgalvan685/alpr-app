@@ -1,45 +1,51 @@
-﻿namespace alpr.api.Database.Models;
+﻿using alpr.api.Shared;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-/// <summary>
-/// Represents a single ALPR detection event, capturing the license plate information, timestamp, associated video and frame details, 
-/// and confidence level of the detection
-/// 
-/// NOTE: Changes will need to be reflected in AlprDbContext.cs
-/// </summary>
+namespace alpr.api.Database.Models;
+
 public class PlateSighting
 {
-    /// <summary>
-    /// Unique ID for the sighting
-    /// </summary>
+    [Key]
     public int Id { get; set; }
 
-    /// <summary>
-    /// Text of the detected license plate. This is the primary data captured by the ALPR system and is used for all subsequent processing
-    /// </summary>
-    public string Plate { get; set; } = default!;
+    [Required]
+    public string Plate { get; set; } = string.Empty;
 
-    /// <summary>
-    /// The issuing state of the lickense plate. This is typically a 2-letter code (ex: "IL" for Illinois) that indicates the state that issued the plate
-    /// </summary>
-    public string? IssueState { get; set; } = default!;
+    public string? IssueState { get; set; }
 
-    /// <summary>
-    /// Timestamp of when the plate was sighted. This is recorded at the moment the ALPR system detects a plate in a video frame
-    /// </summary>
+    [Required]
     public DateTime Timestamp { get; set; }
 
-    /// <summary>
-    /// Foreign key to the Video object that this sighting belongs to
-    /// </summary>
+    [Required]
     public int VideoId { get; set; }
 
+    [ForeignKey(nameof(VideoId))]
+    public Video? Video { get; set; }
+
     /// <summary>
-    /// Frame number where the plate was captured. This helps with debugging and overlays
+    /// Frame number returned by the ALPR engine.
+    /// Matches extracted frame file: frame_00023.jpg
     /// </summary>
+    [Required]
     public int FrameNumber { get; set; }
 
     /// <summary>
-    /// Gets or sets the confidence score representing the certainty of a result
+    /// URL served by static file middleware.
+    /// Example: /frames/12/frame_00023.jpg
     /// </summary>
-    public required double Confidence { get; set; }
+    [Required]
+    public string FrameUrl { get; set; } = string.Empty;
+
+    /// <summary>
+    /// Confidence score from ALPR engine (0–1)
+    /// </summary>
+    [Required]
+    public double Confidence { get; set; }
+
+    /// <summary>
+    /// Bounding box for the detected plate.
+    /// </summary>
+    [Required]
+    public BoundingBox BoundingBox { get; set; } = default!;
 }

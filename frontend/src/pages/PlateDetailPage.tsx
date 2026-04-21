@@ -1,13 +1,14 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import { getAllSightings, PlateSightingDto } from "../api/plates";
+import { getAllSightings } from "../api/plates";
+import { FrameView } from "../components/frames/FrameViewer";
+import { PlateSightingDto } from "@/types/plate_sighting_dto";
 
 export default function PlateDetailPage() {
   const { plate } = useParams();
   const [sightings, setSightings] = useState<PlateSightingDto[]>([]);
   const [loading, setLoading] = useState(true);
 
-  // Step I: Date range filters
   const [startDate, setStartDate] = useState("");
   const [endDate, setEndDate] = useState("");
 
@@ -15,7 +16,8 @@ export default function PlateDetailPage() {
     if (!plate) return;
 
     getAllSightings().then((data) => {
-      setSightings(data);
+      const filtered = data.filter((s) => s.plate === plate);
+      setSightings(filtered);
       setLoading(false);
     });
   }, [plate]);
@@ -24,7 +26,6 @@ export default function PlateDetailPage() {
     return <div className="text-muted-foreground">Loading plate...</div>;
   }
 
-  // Apply date filtering
   const filteredSightings = sightings.filter((s) => {
     const ts = new Date(s.timestamp).getTime();
 
@@ -33,6 +34,8 @@ export default function PlateDetailPage() {
 
     return true;
   });
+
+  const latest = filteredSightings[0];
 
   return (
     <div>
@@ -43,22 +46,12 @@ export default function PlateDetailPage() {
       {/* Date Filters */}
       <div className="flex items-center gap-4 mb-6">
         <div className="flex flex-col">
-          <label className="text-sm text-muted-foreground mb-1">
-            Start Date
-          </label>
+          <label className="text-sm text-muted-foreground mb-1">Start Date</label>
           <input
             type="date"
             value={startDate}
             onChange={(e) => setStartDate(e.target.value)}
-            className="
-        bg-card
-        text-foreground
-        border border-border
-        rounded-md
-        px-3 py-2
-        focus:outline-none
-        focus:ring-2 focus:ring-ring
-      "
+            className="bg-card text-foreground border border-border rounded-md px-3 py-2"
           />
         </div>
 
@@ -68,21 +61,13 @@ export default function PlateDetailPage() {
             type="date"
             value={endDate}
             onChange={(e) => setEndDate(e.target.value)}
-            className="
-        bg-card
-        text-foreground
-        border border-border
-        rounded-md
-        px-3 py-2
-        focus:outline-none
-        focus:ring-2 focus:ring-ring
-      "
+            className="bg-card text-foreground border border-border rounded-md px-3 py-2"
           />
         </div>
       </div>
 
       {/* Sightings Table */}
-      <div className="bg-card border border-border rounded-lg overflow-hidden">
+      <div className="bg-card border border-border rounded-lg overflow-hidden mb-8">
         <table className="min-w-full text-left">
           <thead className="bg-muted text-muted-foreground">
             <tr>
@@ -98,18 +83,11 @@ export default function PlateDetailPage() {
             {filteredSightings.map((s) => (
               <tr key={s.id} className="border-b hover:bg-muted/50">
                 <td className="px-4 py-3">{s.issueState}</td>
-                <td className="px-4 py-3">
-                  {(s.confidence * 100).toFixed(1)}%
-                </td>
+                <td className="px-4 py-3">{(s.confidence * 100).toFixed(1)}%</td>
                 <td className="px-4 py-3">{s.frameNumber}</td>
+                <td className="px-4 py-3">{new Date(s.timestamp).toLocaleString()}</td>
                 <td className="px-4 py-3">
-                  {new Date(s.timestamp).toLocaleString()}
-                </td>
-                <td className="px-4 py-3">
-                  <a
-                    href={`/videos/${s.videoId}`}
-                    className="text-primary hover:underline"
-                  >
+                  <a href={`/videos/${s.videoId}`} className="text-primary hover:underline">
                     View Video
                   </a>
                 </td>
@@ -118,10 +96,7 @@ export default function PlateDetailPage() {
 
             {filteredSightings.length === 0 && (
               <tr>
-                <td
-                  colSpan={5}
-                  className="px-4 py-6 text-center text-muted-foreground"
-                >
+                <td colSpan={5} className="px-4 py-6 text-center text-muted-foreground">
                   No sightings match this filter.
                 </td>
               </tr>
@@ -129,6 +104,14 @@ export default function PlateDetailPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Latest Sighting Preview */}
+      {latest && (
+        <FrameView
+          frameUrl={latest.frameUrl}
+          box={latest.boundingBox}
+        />
+      )}
     </div>
   );
 }

@@ -1,5 +1,6 @@
 ﻿using alpr.api.Database;
 using alpr.api.DTOs;
+using alpr.api.Shared;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -22,44 +23,94 @@ public class PlateSightingController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public ActionResult<IEnumerable<PlateSightingDto>> GetAll()
+    public async Task<ActionResult<IEnumerable<PlateSightingDto>>> GetAll()
     {
-        var plateSightings = _db.PlateSightings
-            .AsNoTracking()
-            .Select(s => new PlateSightingDto(
-                s.Id,
-                s.Plate,
-                s.IssueState,
-                s.Timestamp,
-                s.VideoId,
-                s.FrameNumber,
-                s.Confidence
-            ))
-            .ToList();
+        var sightings = await _db.PlateSightings
+            .OrderByDescending(s => s.Timestamp)
+            .Select(s => new PlateSightingDto
+            {
+                Id = s.Id,
+                Plate = s.Plate,
+                IssueState = s.IssueState,
+                Timestamp = s.Timestamp,
+                VideoId = s.VideoId,
+                FrameNumber = s.FrameNumber,
+                Confidence = s.Confidence,
+                FrameUrl = s.FrameUrl,
+                BoundingBox = new BoundingBox
+                {
+                    X = s.BoundingBox.X,
+                    Y = s.BoundingBox.Y,
+                    Width = s.BoundingBox.Width,
+                    Height = s.BoundingBox.Height
+                }
+            })
+            .ToListAsync();
 
-        return Ok(plateSightings);
+        return Ok(sightings);
     }
 
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet("video/{videoId:int}")]
-    public ActionResult<IEnumerable<PlateSightingDto>> GetByVideo(int videoId)
+    public async Task<ActionResult<IEnumerable<PlateSightingDto>>> GetByVideo(int videoId)
     {
-        var plateSightings = _db.PlateSightings
-            .AsNoTracking()
+        var sightings = await _db.PlateSightings
             .Where(s => s.VideoId == videoId)
-            .Select(s => new PlateSightingDto(
-                s.Id,
-                s.Plate,
-                s.IssueState,
-                s.Timestamp,
-                s.VideoId,
-                s.FrameNumber,
-                s.Confidence
-            ))
-            .ToList();
+            .OrderBy(s => s.FrameNumber)
+            .Select(s => new PlateSightingDto
+            {
+                Id = s.Id,
+                Plate = s.Plate,
+                IssueState = s.IssueState,
+                Timestamp = s.Timestamp,
+                VideoId = s.VideoId,
+                FrameNumber = s.FrameNumber,
+                Confidence = s.Confidence,
+                FrameUrl = s.FrameUrl,
+                BoundingBox = new BoundingBox
+                {
+                    X = s.BoundingBox.X,
+                    Y = s.BoundingBox.Y,
+                    Width = s.BoundingBox.Width,
+                    Height = s.BoundingBox.Height
+                }
+            })
+            .ToListAsync();
 
-        return Ok(plateSightings);
+        return Ok(sightings);
     }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+    [HttpGet("plate/{plate}")]
+    public async Task<ActionResult<IEnumerable<PlateSightingDto>>> GetByPlate(string plate)
+    {
+        var sightings = await _db.PlateSightings
+            .Where(s => s.Plate == plate)
+            .OrderByDescending(s => s.Timestamp)
+            .Select(s => new PlateSightingDto
+            {
+                Id = s.Id,
+                Plate = s.Plate,
+                IssueState = s.IssueState,
+                Timestamp = s.Timestamp,
+                VideoId = s.VideoId,
+                FrameNumber = s.FrameNumber,
+                Confidence = s.Confidence,
+                FrameUrl = s.FrameUrl,
+                BoundingBox = new BoundingBox
+                {
+                    X = s.BoundingBox.X,
+                    Y = s.BoundingBox.Y,
+                    Width = s.BoundingBox.Width,
+                    Height = s.BoundingBox.Height
+                }
+            })
+            .ToListAsync();
+
+        return Ok(sightings);
+    }
+
     #endregion
 }

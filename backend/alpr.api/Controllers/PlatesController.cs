@@ -1,5 +1,4 @@
 ﻿using alpr.api.Database;
-using alpr.api.Database.Models;
 using alpr.api.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,39 +19,17 @@ public class PlatesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     [HttpGet]
-    public async Task<ActionResult<IEnumerable<PlateSightingDto>>> GetAllSightings()
+    public async Task<ActionResult<IEnumerable<PlateSummaryDto>>> GetAll()
     {
-        var sightings = await _db.PlateSightings
-            .AsNoTracking()
-            .Select(s => new PlateSightingDto(
-                s.Id,
-                s.Plate,
-                s.IssueState,
-                s.Timestamp,
-                s.VideoId,
-                s.FrameNumber,
-                s.Confidence
-            ))
-            .ToListAsync();
-
-        return Ok(sightings);
-    }
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpGet("summaries")]
-    public async Task<ActionResult<IEnumerable<PlateSummaryDto>>> GetSummaries()
-    {
-        var summaries = await _db.PlateSightings
-            .AsNoTracking()
-            .GroupBy(s => s.Plate)
-            .Select(g => new PlateSummaryDto(
-                g.Key,
-                "", // TODO: Fix state lookup
-                g.Count(),
-                g.Max(x => x.Timestamp)
-            ))
-            .OrderByDescending(s => s.LastSeen)
+        var summaries = await _db.PlateSummaries
+            .OrderByDescending(p => p.LastSeen)
+            .Select(p => new PlateSummaryDto
+            {
+                Plate = p.Plate,
+                IssueState = p.IssueState,
+                TotalCount = p.TotalCount,
+                LastSeen = p.LastSeen
+            })
             .ToListAsync();
 
         return Ok(summaries);
@@ -61,53 +38,23 @@ public class PlatesController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpGet("byplate/{plate}")]
-    public async Task<ActionResult<PlateSummaryDto>> GetByPlate(string plate)
+    [HttpGet("{plate}")]
+    public async Task<ActionResult<PlateSummaryDto>> GetOne(string plate)
     {
-        if (string.IsNullOrWhiteSpace(plate))
-            return BadRequest();
-
-        var group = await _db.PlateSightings
-            .AsNoTracking()
-            .Where(s => s.Plate.ToLower() == plate.ToLower())
-            .ToListAsync();
-
-        if (!group.Any())
-            return NotFound();
-
-        var summary = new PlateSummaryDto(
-            plate,
-            "", // TODO: Fix state lookup
-            group.Count,
-            group.Max(s => s.Timestamp)
-        );
-
-        return Ok(summary);
-    }
-
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    [HttpGet("{id:int}")]
-    public async Task<ActionResult<PlateSightingDto>> GetById(int id)
-    {
-        var s = await _db.PlateSightings
-            .AsNoTracking()
-            .Where(x => x.Id == id)
-            .Select(x => new PlateSightingDto(
-                x.Id,
-                x.Plate,
-                x.IssueState,
-                x.Timestamp,
-                x.VideoId,
-                x.FrameNumber,
-                x.Confidence
-            ))
+        var summary = await _db.PlateSummaries
+            .Where(p => p.Plate == plate)
+            .Select(p => new PlateSummaryDto
+            {
+                Plate = p.Plate,
+                IssueState = p.IssueState,
+                TotalCount = p.TotalCount,
+                LastSeen = p.LastSeen
+            })
             .FirstOrDefaultAsync();
 
-        if (s == null)
+        if (summary == null)
             return NotFound();
 
-        return Ok(s);
+        return Ok(summary);
     }
 }

@@ -46,6 +46,16 @@ public class AlprDbContext : DbContext
                   .WithMany()
                   .HasForeignKey(p => p.VideoId)
                   .OnDelete(DeleteBehavior.Cascade);
+
+            entity.OwnsOne(p => p.BoundingBox, bb =>
+            {
+                bb.WithOwner();
+
+                bb.Property(b => b.X).HasColumnName("BoundingBox_X").IsRequired();
+                bb.Property(b => b.Y).HasColumnName("BoundingBox_Y").IsRequired();
+                bb.Property(b => b.Width).HasColumnName("BoundingBox_Width").IsRequired();
+                bb.Property(b => b.Height).HasColumnName("BoundingBox_Height").IsRequired();
+            });
         });
 
         // PlateSummaries table

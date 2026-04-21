@@ -1,61 +1,31 @@
+import { PlateSightingDto } from "@/types/plate_sighting_dto";
+import { PlateSummaryDto } from "@/types/plate_summary";
+import { PlateDto } from "@/types/plate";
 import { apiGet } from "./apiClient";
 
-export interface PlateDto {
-  id: number;
-  plate: string;
-  issueState?: string;
-}
-
-export interface PlateSummaryDto {
-  plate: string;
-  issueState?: string;
-  totalCount: number;
-  lastSeen: string;
-}
-
-export interface PlateSightingDto {
-  id: number;
-  plate: string;
-  issueState?: string;
-  timestamp: string;
-  frameNumber: number;
-  confidence: number;
-  videoId: number;
-}
-
-// Plates Controller
-// TODO: Refine this. Eventually, this will just get too large and we'll want to filter this list
+// Plates
 export function getAllPlates() {
   return apiGet<PlateDto[]>("/api/plates");
 }
 
-// TODO: This endpoint is a bit redundant with the one below, consider consolidating them
-export function getPlatePlateSummaries() {
+export function getPlateSummaries() {
   return apiGet<PlateSummaryDto[]>("/api/plates/summaries");
 }
 
-export function getPlateByNumber(plate: string) {
-  return apiGet<PlateSightingDto[]>(`/api/plates/byplate/${plate}`);
-}
-
-export function getPlateById(plate: string) {
-  return apiGet<PlateSightingDto[]>(`/api/plates/${plate}`);
-}
-
-// Plate Sighting Controller
+// Sightings
 export function getAllSightings() {
   return apiGet<PlateSightingDto[]>("/api/platesighting");
+}
+
+export function getSightingsForPlate(plate: string) {
+  return apiGet<PlateSightingDto[]>(`/api/platesighting/plate/${plate}`);
 }
 
 export function getPlateSightingsForVideo(videoId: number) {
   return apiGet<PlateSightingDto[]>(`/api/platesighting/video/${videoId}`);
 }
 
-// Plate Summary Controller
-export function getPlateSummaries(videoId: number) {
-  return apiGet<PlateSummaryDto[]>(`/api/platesummary`);
-}
-
+// Summaries
 export function getPlateSummaryByPlateNumber(plate: string) {
-  return apiGet<PlateSummaryDto[]>(`/api/platesummary/${plate}`);
+  return apiGet<PlateSummaryDto>(`/api/platesummary/${plate}`);
 }

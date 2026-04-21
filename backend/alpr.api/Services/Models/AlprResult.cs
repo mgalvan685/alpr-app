@@ -1,4 +1,6 @@
-﻿namespace alpr.api.Services.Models;
+﻿using alpr.api.Shared;
+
+namespace alpr.api.Services.Models;
 
 public class AlprResult
 {
@@ -11,4 +13,5 @@ public class PlateDetection
     public DateTime Timestamp { get; set; }
     public int FrameNumber { get; set; }
     public double Confidence { get; set; }
+    public BoundingBox BoundingBox { get; set; } = default!;
 }

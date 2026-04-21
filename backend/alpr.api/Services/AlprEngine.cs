@@ -1,30 +1,46 @@
-﻿using System.Runtime.InteropServices;
-using System.Text;
+﻿using alpr.api.Helpers;
+using alpr.api.Services.Interfaces;
+using alpr.api.Services.Models;
+using alpr.api.Shared;
 
 namespace alpr.api.Services;
 
-public static class AlprEngine
+public class AlprEngine : IAlprEngine
 {
-    [DllImport("AlprEngine.dll", CallingConvention = CallingConvention.Cdecl)]
-    public static extern int ProcessFrame(
-        string imagePath,
-        StringBuilder plateOut,
-        StringBuilder stateOut,
-        out float confidenceOut
-    );
-
-    public static (bool found, string plate, string state, float confidence) Analyze(string framePath)
+    public Task<AlprResult> ProcessVideoAsync(string filePath)
     {
-        var plate = new StringBuilder(32);
-        var state = new StringBuilder(16);
+        return Task.Run(() =>
+        {
+            // Allocate buffer for native detections
+            var native = new AlprEngineNative.NativePlateDetection[EngineConstants.MAX_DETECTIONS_BUFFER];
 
-        float confidence;
+            // Call into the native DLL
+            int count = AlprEngineNative.ProcessVideo(filePath, native, EngineConstants.MAX_DETECTIONS_BUFFER);
 
-        int result = ProcessFrame(framePath, plate, state, out confidence);
+            var result = new AlprResult();
 
-        if (result == 0)
-            return (false, "", "", 0);
+            for (int i = 0; i < count; i++)
+            {
+                var n = native[i];
 
-        return (true, plate.ToString(), state.ToString(), confidence);
+                result.Detections.Add(new PlateDetection
+                {
+                    Plate = n.Plate,
+                    Timestamp = DateTime.UnixEpoch.AddSeconds(n.TimestampSeconds),
+                    FrameNumber = n.FrameNumber,
+                    Confidence = n.Confidence,
+
+                    BoundingBox = new BoundingBox
+                    {
+                        X = n.BoundingBox.X,
+                        Y = n.BoundingBox.Y,
+                        Width = n.BoundingBox.Width,
+                        Height = n.BoundingBox.Height
+                    }
+                });
+            }
+
+            return result;
+        });
     }
 }

@@ -2,9 +2,9 @@ using alpr.api.Database;
 using alpr.api.Helpers;
 using alpr.api.Services;
 using alpr.api.Services.Interfaces;
-using alpr.api.Workers;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,13 +16,11 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<AlprDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Register background workers
-builder.Services.AddHostedService<VideoProcessingWorker>();
-
 // Register ALPR services
-builder.Services.AddSingleton<IAlprEngine, FakeAlprEngine>(); // TODO: Replace with real implementation2
+//builder.Services.AddSingleton<IAlprEngine, FakeAlprEngine>(); // TODO: Replace with real implementation2
 builder.Services.AddSingleton<IVideoMetadataService, FfprobeMetadataService>();
 builder.Services.AddHostedService<VideoProcessingService>();
+builder.Services.AddSingleton<IAlprEngine, AlprEngine>();
 
 builder.Services.AddCors(options =>
 {
@@ -61,5 +59,12 @@ app.UseCors("AllowAll");
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(builder.Environment.ContentRootPath, "frames")),
+    RequestPath = "/frames"
+});
 
 app.Run();
