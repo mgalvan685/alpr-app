@@ -1,0 +1,65 @@
+## Visual Studio / .NET common ignores
+
+# User-specific files
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+out/
+publish/
+artifacts/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+project.assets.json
+project.fragment.lock.json
+
+# IDEs
+.vscode/
+.idea/
+*.sln.iml
+
+# Test results
+TestResults/
+*.trx
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Database files
+*.mdf
+*.ldf
+*.db
+*.sqlite
+
+# Coverage
+coverage/
+*.coverage
+*.coveragexml
+coverage*.xml
+
+# Local appsettings / secrets
+appsettings.Local.json
+appsettings.*.Local.json
+secrets.json
+
+# OS generated
+.DS_Store
+Thumbs.db
+
+# Misc
+package-lock.json
+yarn.lock
+.sonar/
+
+# Keep repository clean: track source, project files, and checked-in configuration only
