@@ -291,3 +291,9 @@ Once running, open the dashboard in your browser and upload a video to begin pro
 ### 6. Note To Self
 
 I still need to add instructions for Docker setup.
+
+### 7. TODO
+- YOLO is not cooperating. Still need to get this running.
+- Hotplates - set up the API
+- Hotplates - create Android UI
+- Integrate Hotplates with the main UI
