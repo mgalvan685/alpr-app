@@ -3,16 +3,14 @@
 /// <summary>
 /// Used when a device or service reports a new sighting of a plate.
 /// </summary>
-public record HotplateSightingCreateRequest
-{
-    public required string Plate { get; init; }
-    public string? State { get; init; }
-    public required DateTime Timestamp { get; init; }
-    public required double Latitude { get; init; }
-    public required double Longitude { get; init; }
-    public required float Confidence { get; init; }
-    public string? ImageUrl { get; init; }
-    public required string Source { get; init; }
-    public string? DeviceId { get; init; }
-    public string? RawMetadataJson { get; init; }
-}
+public record HotplateSightingCreateRequest(
+    string Plate,
+    string? State,
+    DateTime Timestamp,
+    double Latitude,
+    double Longitude,
+    float Confidence,
+    string? ImageUrl,
+    string Source,
+    string? DeviceId,
+    string? RawMetadataJson);
