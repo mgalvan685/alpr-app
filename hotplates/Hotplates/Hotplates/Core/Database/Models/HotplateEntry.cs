@@ -11,7 +11,7 @@ public class HotplateEntry
     [MaxLength(DatabaseConstants.MAX_PLATE_LENGTH)]
     public string Plate { get; set; } = default!;
     public string? State { get; set; }
-
+    
     public HotplateCategory Category { get; set; }
     public string Description { get; set; } = default!;
     public HotplateSource Source { get; set; }
@@ -19,6 +19,7 @@ public class HotplateEntry
     public DateTime CreatedAt { get; set; }
     public DateTime? ExpiresAt { get; set; }
     public int Severity { get; set; }
+    public string Status { get; set; } = HotplateStatus.Active;
 
     // Cached last-seen info
     public DateTime? LastSeenTimestamp { get; set; }

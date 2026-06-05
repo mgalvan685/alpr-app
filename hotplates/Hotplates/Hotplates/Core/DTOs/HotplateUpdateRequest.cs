@@ -1,4 +1,6 @@
-﻿namespace Hotplates.Core.DTOs;
+﻿using Hotplates.Helpers;
+
+namespace Hotplates.Core.DTOs;
 
 /// <summary>
 /// Used when updating an existing hotplate entry.
@@ -8,4 +10,5 @@ public record HotplateUpdateRequest(
     string Category,
     string Source,
     DateTime? ExpiresAt,
-    int Severity);
+    int Severity,
+    string Status = HotplateStatus.Active);

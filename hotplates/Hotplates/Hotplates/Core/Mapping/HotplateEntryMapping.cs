@@ -18,6 +18,7 @@ public static class HotplateEntryMapping
             CreatedAt: entity.CreatedAt,
             ExpiresAt: entity.ExpiresAt,
             Severity: entity.Severity,
+            Status: entity.Status,
             LastSeenTimestamp: entity.LastSeenTimestamp,
             LastSeenLatitude: entity.LastSeenLatitude,
             LastSeenLongitude: entity.LastSeenLongitude,
@@ -37,7 +38,8 @@ public static class HotplateEntryMapping
             Source = Enum.Parse<HotplateSource>(request.Source, ignoreCase: true),
             CreatedAt = DateTime.UtcNow,
             ExpiresAt = request.ExpiresAt,
-            Severity = request.Severity
+            Severity = request.Severity,
+            Status = request.Status
         };
     }
 

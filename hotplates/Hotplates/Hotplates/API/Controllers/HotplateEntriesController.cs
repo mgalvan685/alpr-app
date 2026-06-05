@@ -18,9 +18,9 @@ public class HotplateEntriesController : ControllerBase
     // GET: api/hotplateentries
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<HotplateEntryDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll()
+    public async Task<IActionResult> GetAll([FromQuery] bool includeDisabled = false)
     {
-        var entries = await _service.GetAllAsync();
+        var entries = await _service.GetAllAsync(includeDisabled);
         return Ok(entries);
     }
 
@@ -59,19 +59,30 @@ public class HotplateEntriesController : ControllerBase
         return Ok(updated);
     }
 
-    // TODO: Instead of deleting the plate, we should probably just mark it as "resolved" or "inactive" and keep it in the database for historical purposes.
-    //          THis will need a dataabse migration update as well. For now, we'll just implement the delete functionality as is, but we should revisit this
-    //          in the future.
+    // PUT: api/hotplateentries/{id}/reactivate
+    [HttpPut("{id:guid}/reactivate")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> Reactivate(Guid id)
+    {
+        var reactivated = await _service.ReactivateAsync(id);
+        if (!reactivated)
+            return NotFound();
+
+        return Ok(reactivated);
+    }
+
     // DELETE: api/hotplateentries/{id}
     [HttpDelete("{id:guid}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<IActionResult> Delete(Guid id)
+    public async Task<IActionResult> MarkInactiveAsync(Guid id)
     {
-        var deleted = await _service.DeleteAsync(id);
+        var deleted = await _service.MarkInactiveAsync(id);
         if (!deleted)
             return NotFound();
 
         return NoContent();
     }
+
 }

@@ -1,4 +1,6 @@
-﻿namespace Hotplates.Core.DTOs;
+﻿using Hotplates.Helpers;
+
+namespace Hotplates.Core.DTOs;
 
 /// <summary>
 /// Used when a client wants to create a new hotplate entry in the system.
@@ -10,4 +12,5 @@ public record HotplateCreateRequest(
     string Category,
     string Source,
     DateTime? ExpiresAt,
-    int Severity);
+    int Severity,
+    string Status = HotplateStatus.Active);

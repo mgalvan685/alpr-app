@@ -10,6 +10,7 @@ public record HotplateEntryDto(
     DateTime CreatedAt,
     DateTime? ExpiresAt,
     int Severity,
+    string Status,
     DateTime? LastSeenTimestamp,
     double? LastSeenLatitude,
     double? LastSeenLongitude,
